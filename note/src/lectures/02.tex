@@ -12,5 +12,29 @@ To formalize this question, we need to introduce the basic definition of graph t
 	A \textbf{multiset} $M$ on a set $S$ is a collection (unordered) of elements in $S$.
 	
 	$\forall x\in M\cap S$, the number of times that $x\in S$ occurs in $M$ is greater or equal to $0$ and is called the \textbf{multiplicity} of $x$ in $M$, $\mu_M(x)$.
+
+	If $\forall x\in S, \mu_M(x) = \mu_{M'}(x)$, then $M = M'$.
 \end{definition}
+
+\begin{eg}
+	If $\mu_M(x) = 0,1\quad\forall x\in S$, then $M$ is a set.
+\end{eg}
+
+\begin{definition}
+	Let $S$ be a finite set of size $n$.
+	\[
+		\binom{S}{k} = \{k-\text{subsets of }S\} = \{A\subseteq S: |A| = k\}
+	\]
+	\[ \left|\binom{S}{k}\right| = \binom{n}{k} = \frac{n!}{k!(n-k)!}
+	\]
+
+	\[
+		\multiset{S}{k} = \{k-\text{multisets of }S\} = \{M: M\text{ is a multiset on }S, |M| = k\}
+	\]
+	\[ \left|\multiset{S}{k}\right| = \binom{n+k-1}{k}\]
+	
+\end{definition}
+
+There're 2 ways to compute the size of $\multiset{S}{k}$.
+
 
