@@ -1,0 +1,43 @@
+%! TeX program = pdflatex
+\documentclass[a4paper]{report}
+\usepackage{notes}
+\author{Zhengjie Min}
+\title{Lecture Notes Template}
+
+\thispagestyle{empty}
+\addbibresource{reference.bib}
+
+\usepackage{adjustbox}
+\usepackage{centernot}
+
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+	This is a template for TCS (and other kind of) lecture notes.
+\end{abstract}
+
+\newpage
+
+\tableofcontents
+
+\part{Randomized Graph Algorithms}
+
+\import{lectures}{477-22.tex}
+
+\newpage
+%─────Appendix────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+\appendix
+\appendixpage{}
+
+\import{lectures}{lemma.tex}
+%\input{appendix.tex}
+
+\newpage
+%─────Reference──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+\pagestyle{plain}
+\printbibliography{}
+
+\end{document}

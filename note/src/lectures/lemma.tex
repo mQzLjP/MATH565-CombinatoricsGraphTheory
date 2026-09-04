@@ -1,0 +1,48 @@
+
+\chapter{Algebra}
+
+\begin{theorem}
+	\label{lem:interpolation}
+	For any polynomial \( A \in \CC[X] \) of degree \( n-1 \), any point set \( \{p_0, \ldots, p_{n-1}\} \) of size \( n \), \( \{(p_i, A(p_i))\}_{i=0}^{n-1} \) determines \( A(x) \) and vice versa.
+\end{theorem}
+
+\begin{theorem}[Fundamental Theorem of Algebra]
+	\label{thm:fundamental-algebra}
+	Every non-constant single-variable polynomial with complex coefficients has at least one complex root.
+
+	In math terms, for $A(x) = \sum_{i=0}^{n-1} a_i x^i$, either $\exists x \in \mathbb C$ such that $A(x) = 0$, or $a_0 = a_1 = \cdots = a_{n-1} = 0$.
+\end{theorem}
+
+\chapter{Analysis}
+
+\begin{theorem}[\textbf{Master Theorem (simplified)}]
+	\label{lem:master-sim}
+	Let the recurrence relation be:
+	\[ T(n) = aT\left(\frac{n}{b}\right) + n^d \]
+	where $a \ge 1$ is the number of subproblems, $b > 1$ is the factor by which the problem size is reduced, and $d \ge 0$. The asymptotic bound of $T(n)$ is given by:
+
+	\begin{enumerate}
+		\item If $\log_b a > d$, then $T(n) = O(n^{\log_b a})$.
+		\item If $\log_b a = d$, then $T(n) = O(n^d \log n)$.
+		\item If $\log_b a < d$, then $T(n) = O(n^d)$.
+	\end{enumerate}
+\end{theorem}
+
+\begin{theorem}[\textbf{Master Theorem}]
+	\label{lem:master}
+	Let $a \ge 1$ and $b > 1$ be constants, let $f(n)$ be a function, and let $T(n)$ be defined on the nonnegative integers by the recurrence:
+	\[ T(n) = aT(n/b) + f(n) \]
+
+	Then $T(n)$ has the following asymptotic bounds:
+	\begin{itemize}
+		\item \textbf{Case 1:} If $f(n) = O(n^{\log_b a - \epsilon})$ for some constant $\epsilon > 0$, \\
+		      then $T(n) = \Theta(n^{\log_b a})$.
+
+		\item \textbf{Case 2:} If $f(n) = \Theta(n^{\log_b a} \log^k n)$ for some constant $k \ge 0$, \\
+		      then $T(n) = \Theta(n^{\log_b a} \log^{k+1} n)$.
+
+		\item \textbf{Case 3:} If $f(n) = \Omega(n^{\log_b a + \epsilon})$ for some constant $\epsilon > 0$, \\
+		      and if $a f(n/b) \le c f(n)$ for some constant $c < 1$ and all sufficiently large $n$ (Regularity Condition), \\
+		      then $T(n) = \Theta(f(n))$.
+	\end{itemize}
+\end{theorem}

@@ -1,0 +1,601 @@
+\NeedsTeXFormat{LaTeX2e} % The recently updated LaTeX format
+\ProvidesPackage{notes}
+% basics
+\usepackage[utf8]{inputenc}
+% \usepackage[T1]{fontenc}
+\usepackage{textcomp}
+\usepackage[hyphens]{url}
+\usepackage[style=alphabetic,maxcitenames=1]{biblatex}
+\usepackage[colorlinks=true,linkcolor=cyan,urlcolor=magenta,citecolor=violet]{hyperref}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{booktabs}
+\usepackage{emptypage}
+\usepackage{subcaption}
+\usepackage[usenames,dvipsnames]{xcolor}
+\usepackage{cmbright}
+
+%%%%% FONT SETTINGS
+
+\usepackage{cmbright}
+\usepackage{sansmathfonts}
+\usepackage[T1]{fontenc}
+\renewcommand*\familydefault{\sfdefault} %% Only if the base font of the document is to be sans serif
+\renewcommand{\rmdefault}{cmbr}   % CM Bright as roman (it's actually sans)
+\renewcommand{\sfdefault}{cmbr}
+\renewcommand{\familydefault}{\sfdefault}
+
+\usepackage{amsmath, amsfonts, mathtools, amsthm, amssymb, mathrsfs, commath, nicematrix}
+\usepackage{geometry}
+\usepackage{cancel}
+\usepackage{stmaryrd}
+\usepackage{systeme}
+\usepackage{pgffor}
+\usepackage{extarrows}
+
+\usepackage{forest}
+
+% square bracket fix
+\DeclareSymbolFont{serifbrackets}{OT1}{cmr}{m}{n}
+\DeclareMathSymbol{(}{\mathopen}{serifbrackets}{`\(}
+\DeclareMathSymbol{)}{\mathclose}{serifbrackets}{`\)}
+\DeclareMathSymbol{[}{\mathopen}{serifbrackets}{`\[}
+\DeclareMathSymbol{]}{\mathclose}{serifbrackets}{`\]}
+
+% sans mathbb from Fourier
+\DeclareFontFamily{U}{futm}{} %%% taken from fourier.sty
+\DeclareFontShape{U}{futm}{m}{n}{
+	<-> s * [1] fourier-bb % but changing the magnification factor
+}{}
+\DeclareMathAlphabet{\mathbb}{U}{futm}{m}{n}
+
+% use thicker cmss for numbers
+\AtBeginDocument{
+	\DeclareSymbolFont{operators}{OT1}{cmss}{m}{n}
+	\SetSymbolFont{operators}{bold}{OT1}{cmss}{bx}{n}
+	% \DeclareMathSymbol{0}{\mathalpha}{operators}{`0}
+	% \DeclareMathSymbol{1}{\mathalpha}{operators}{`1}
+	% \DeclareMathSymbol{2}{\mathalpha}{operators}{`2}
+	% \DeclareMathSymbol{3}{\mathalpha}{operators}{`3}
+	% \DeclareMathSymbol{4}{\mathalpha}{operators}{`4}
+	% \DeclareMathSymbol{5}{\mathalpha}{operators}{`5}
+	% \DeclareMathSymbol{6}{\mathalpha}{operators}{`6}
+	% \DeclareMathSymbol{7}{\mathalpha}{operators}{`7}
+	% \DeclareMathSymbol{8}{\mathalpha}{operators}{`8}
+	% \DeclareMathSymbol{9}{\mathalpha}{operators}{`9}
+	% \DeclareMathSymbol{!}{\mathclose}{operators}{`!}
+	\renewcommand{\sim}{\mathrel{\raisebox{-0.7ex}{\sffamily\textasciitilde}}}
+}
+%% Math
+
+% quiver style
+\usepackage{tikz-cd}
+% `calc` is necessary to draw curved arrows.
+\usetikzlibrary{calc}
+% `pathmorphing` is necessary to draw squiggly arrows.
+\usetikzlibrary{decorations.pathmorphing}
+
+% A TikZ style for curved arrows of a fixed height, due to AndréC.
+\tikzset{curve/.style={settings={#1},to path={(\tikztostart)
+					.. controls ($(\tikztostart)!\pv{pos}!(\tikztotarget)!\pv{height}!270:(\tikztotarget)$)
+					and ($(\tikztostart)!1-\pv{pos}!(\tikztotarget)!\pv{height}!270:(\tikztotarget)$)
+					.. (\tikztotarget)\tikztonodes}},
+	settings/.code={\tikzset{quiver/.cd,#1}
+			\def\pv##1{\pgfkeysvalueof{/tikz/quiver/##1}}},
+	quiver/.cd,pos/.initial=0.35,height/.initial=0}
+
+% TikZ arrowhead/tail styles.
+\tikzset{tail reversed/.code={\pgfsetarrowsstart{tikzcd to}}}
+\tikzset{2tail/.code={\pgfsetarrowsstart{Implies[reversed]}}}
+\tikzset{2tail reversed/.code={\pgfsetarrowsstart{Implies}}}
+% TikZ arrow styles.
+\tikzset{no body/.style={/tikz/dash pattern=on 0 off 1mm}}
+
+% useful macro for class
+\newcommand{\at}[3]{\left.#1\right\vert_{#2}^{#3}}
+\newcommand\quotient[2]{
+	\mathchoice
+	{% \displaystyle
+		\text{\raise1ex\hbox{$#1$}\Big/\lower1ex\hbox{$#2$}}%
+	}
+	{% \textstyle
+		#1\,/\,#2
+	}
+	{% \scriptstyle
+		#1\,/\,#2
+	}
+	{% \scriptscriptstyle
+		#1\,/\,#2
+	}
+}
+
+\newcommand{\True}{\textsf{True}}
+\newcommand{\T}{\textsf{T}}
+\newcommand{\False}{\textsf{False}}
+\newcommand{\F}{\textsf{F}}
+\newcommand{\act}{\rotatebox[origin=c]{-180}{\(\,\circlearrowright\,\)}}
+
+\usepackage{physics}
+\usepackage{complexity}
+
+\DeclareMathOperator{\id}{id}
+\DeclareMathOperator{\supp}{supp}
+\DeclareMathOperator{\vol}{vol}
+\DeclareMathOperator{\dist}{dist}
+\DeclareMathOperator{\diam}{diam}
+\DeclareMathOperator{\im}{Im}
+\DeclareMathOperator{\sgn}{sgn}
+\DeclareMathOperator{\Int}{Int}
+\DeclareMathOperator{\diag}{diag}
+\DeclareMathOperator{\dom}{dom}
+\DeclareMathOperator*{\argmax}{arg\,max}
+\DeclareMathOperator*{\argmin}{arg\,min}
+\DeclareMathOperator{\Var}{Var}
+\DeclareMathOperator{\Cov}{Cov}
+\DeclareMathOperator{\Corr}{Corr}
+\DeclareMathOperator{\lcm}{lcm}
+\DeclareMathOperator{\coker}{coker} % cokernel
+\DeclareMathOperator{\Sym}{Sym} % symmetric group
+\DeclareMathOperator{\Aut}{Aut} % automorphism group
+\DeclareMathOperator{\End}{End} % endomorphism group
+\DeclareMathOperator{\Hom}{Hom} % homomorphisms
+\DeclareMathOperator{\Gal}{Gal} % galois group
+\DeclareMathOperator{\ob}{Ob} % objects in category theory
+\DeclareMathOperator{\vect}{Vect} % Vector objects in category theory
+\DeclareMathOperator{\sets}{Sets} % set objects in category theory
+\DeclareMathOperator{\GL}{GL} % general linear group
+\DeclareMathOperator{\Id}{Id} % identity map
+\DeclareMathOperator{\Fun}{Fun} % function group
+\DeclareMathOperator{\reg}{reg} % regular representation
+\DeclareMathOperator{\Span}{span} % span of vector space generator
+\DeclareMathOperator{\Ind}{Ind} % induced representation
+\DeclareMathOperator{\Gps}{Gps} % group category
+\DeclareMathOperator{\Top}{Top} % topological space category
+\DeclareMathOperator{\indeg}{indeg}
+\DeclareMathOperator{\outdeg}{outdeg}
+
+\renewcommand{\Re}{\operatorname{Re}}
+\renewcommand{\Im}{\operatorname{Im}}
+
+\let\implies\Rightarrow
+\let\impliedby\Leftarrow
+\let\iff\Leftrightarrow
+
+\usepackage{stmaryrd} % for \lightning
+\newcommand\conta{\scalebox{1.1}{\(\lightning\)}}
+\newcommand\contra{\scalebox{1.1}{\(\lightning\)}}
+
+\usepackage{bm}
+\usepackage{bbm}
+
+% figure support
+\usepackage{import}
+\usepackage{xifthen}
+% \pdfminorversion=7
+\usepackage{pdfpages}
+% Compatibility fallback for older LaTeX kernels used by some TeX distributions.
+\providecommand{\IfPDFManagementActiveF}[1]{#1}
+\usepackage{transparent}
+\newcommand{\incfig}[2][\columnwidth]{%
+	\def\svgwidth{#1}
+	\import{Figures/}{#2.pdf_tex}
+}
+
+% some efficient math alias
+\newcommand{\CC}{\mathbb{C}} % Complex numbers
+\newcommand{\FF}{\mathbb{F}} % Finite fields
+\newcommand{\NN}{\mathbb{N}} % Natural numbers
+\newcommand{\QQ}{\mathbb{Q}} % Rational numbers
+\newcommand{\RR}{\mathbb{R}} % Real numbers
+\newcommand{\ZZ}{\mathbb{Z}} % Integers
+\newcommand{\KK}{\mathbb{K}} % general fields
+\newcommand{\qo}{\quotient} % easier way to type quotient
+\newcommand{\mb}{\mathbf}
+
+% Automated Letter Loops (The "Magic" Part)
+\foreach \x in {A,...,Z} {
+		\expandafter\xdef\csname c\x\endcsname{\noexpand\mathcal{\x}} % mathcal 
+		\expandafter\xdef\csname b\x\endcsname{\noexpand\mathbb{\x}} % mathbb 
+		\expandafter\xdef\csname f\x\endcsname{\noexpand\mathfrak{\x}} % mathfrak 
+		\expandafter\xdef\csname s\x\endcsname{\noexpand\mathscr{\x}} % mathscr 
+	}
+
+% Paired Delimiters (Auto-sizing)
+\DeclarePairedDelimiter{\ceil}{\lceil}{\rceil}  % Ceiling function
+\DeclarePairedDelimiter{\floor}{\lfloor}{\rfloor} % Floor function
+\DeclarePairedDelimiter{\angl}{\langle}{\rangle} % inner product or genrated idea
+\DeclarePairedDelimiter{\br}{\llbracket}{\rrbracket} % french styled integer expression
+\DeclarePairedDelimiter{\baceInner}{(}{)} % auto resized braces
+\NewDocumentCommand{\bace}{s m}{
+	\IfBooleanTF{#1}
+	{\baceInner{#2}} % normal sized if \bace*
+	{\baceInner*{#2}} % auto resized if \bace
+}
+
+% greek and msic symbols
+\newcommand{\eps}{\varepsilon} % Better looking epsilon
+\newcommand{\vp}{\varphi}      % Better looking phi
+\newcommand{\lam}{\lambda}     % Shorthand for lambda
+\newcommand{\half}{\frac{1}{2}} % Very common fraction
+\newcommand{\inv}{^{-1}}       % Inverse operator shorthand
+\newcommand{\rsa}{\rightsquigarrow} % some abution of arrow
+% \newcommand{\iff}{\Longleftrightarrow} % Make 'iff' arrow longer if desired
+\newcommand{\mchoo}[2]{\left(\!\!\middle(\genfrac{}{}{0pt}{}{#1}{#2}\middle)\!\!\right)} %  k-multisets command 
+\newcommand{\ALG}{\text{ALG}}
+\newcommand{\OPT}{\text{OPT}}
+\newcommand{\cost}{\text{cost}}
+
+% quotient 
+% \newcommand{\quotient}[2]{{#1}/\mkern-2mu{#2}}
+
+\usepackage[inline, shortlabels]{enumitem}
+\usepackage{multicol}
+\setlength\multicolsep{0pt}
+
+\usepackage{caption}
+\captionsetup{belowskip=0pt}
+\geometry{a4paper,left=2.54cm,right=2.54cm,top=2.54cm,bottom=2.54cm}
+
+% for the big braces
+\usepackage{bigdelim}
+
+% correct
+\definecolor{correct}{HTML}{009900}
+\newcommand\correct[2]{\ensuremath{\:}{\color{red}{#1}}\ensuremath{\to }{\color{correct}{#2}}\ensuremath{\:}}
+\newcommand\green[1]{{\color{correct}{#1}}}
+
+% hide parts
+\newcommand\hide[1]{}
+
+% si unitx
+\usepackage{siunitx}
+\sisetup{locale = FR}
+% \renewcommand\vec[1]{\mathbf{#1}}
+\newcommand\mat[1]{\mathbf{#1}}
+
+
+% tikz
+\usepackage{tikz}
+\usetikzlibrary{intersections, angles, quotes, positioning}
+\usetikzlibrary{arrows.meta}
+\usepackage{pgfplots}
+\pgfplotsset{compat=1.13}
+
+
+\tikzset{
+	force/.style={thick, {Circle[length=2pt]}-stealth, shorten <=-1pt}
+}
+
+% Algorithm Env
+\usepackage[linesnumbered,lined,vlined,ruled,commentsnumbered,resetcount,algochapter]{algorithm2e}
+\SetKwComment{Comment}{// }{}
+\SetArgSty{textsl}
+\def\algocflineautorefname{Algorithm}
+\counterwithin{algocfline}{chapter}
+
+% Clear out the item autoref name
+\makeatletter
+\def\itemautorefname{\@gobble}
+\makeatother
+
+% theorems
+\makeatother
+\usepackage{thmtools}
+\usepackage[framemethod=TikZ]{mdframed}
+
+\mdfsetup{skipabove=1em,skipbelow=0em}
+
+\theoremstyle{definition}
+
+\declaretheoremstyle[
+	headfont=\bfseries\sffamily\color{ForestGreen!70!black}, bodyfont=\normalfont,
+	mdframed={
+			linewidth=2pt,
+			rightline=false, topline=false, bottomline=false,
+			linecolor=ForestGreen, backgroundcolor=ForestGreen!5,
+			nobreak=false
+		}
+]{thmgreenbox}
+
+\declaretheoremstyle[
+	headfont=\bfseries\sffamily\color{ForestGreen!70!black}, bodyfont=\normalfont,
+	mdframed={
+			linewidth=2pt,
+			rightline=false, topline=false, bottomline=false,
+			linecolor=ForestGreen, backgroundcolor=ForestGreen!8,
+			nobreak=false
+		}
+]{thmgreen2box}
+
+\declaretheoremstyle[
+	headfont=\bfseries\sffamily\color{NavyBlue!70!black}, bodyfont=\normalfont,
+	mdframed={
+			linewidth=2pt,
+			rightline=false, topline=false, bottomline=false,
+			linecolor=NavyBlue, backgroundcolor=NavyBlue!5,
+			nobreak=false
+		}
+]{thmbluebox}
+
+\declaretheoremstyle[
+	headfont=\bfseries\sffamily\color{TealBlue!70!black}, bodyfont=\normalfont,
+	mdframed={
+			linewidth=2pt,
+			rightline=false, topline=false, bottomline=false,
+			linecolor=TealBlue,
+			nobreak=false
+		}
+]{thmblueline}
+
+\declaretheoremstyle[
+	headfont=\bfseries\sffamily\color{RawSienna!70!black}, bodyfont=\normalfont,
+	mdframed={
+			linewidth=2pt,
+			rightline=false, topline=false, bottomline=false,
+			linecolor=RawSienna, backgroundcolor=RawSienna!5,
+			nobreak=false
+		}
+]{thmredbox}
+
+\declaretheoremstyle[
+	headfont=\bfseries\sffamily\color{RawSienna!70!black}, bodyfont=\normalfont,
+	mdframed={
+			linewidth=2pt,
+			rightline=false, topline=false, bottomline=false,
+			linecolor=RawSienna, backgroundcolor=RawSienna!5,
+			nobreak=false
+		}
+]{conclredbox}
+
+\declaretheoremstyle[
+	headfont=\bfseries\sffamily\color{RawSienna!70!black}, bodyfont=\normalfont,
+	mdframed={
+			linewidth=2pt,
+			rightline=false, topline=false, bottomline=false,
+			linecolor=RawSienna, backgroundcolor=RawSienna!8,
+			nobreak=false
+		}
+]{thmred2box}
+
+\declaretheoremstyle[
+	headfont=\bfseries\sffamily\color{SeaGreen!70!black}, bodyfont=\normalfont,
+	mdframed={
+			linewidth=2pt,
+			rightline=false, topline=false, bottomline=false,
+			linecolor=SeaGreen, backgroundcolor=SeaGreen!2,
+			nobreak=false
+		}
+]{thmgreen3box}
+
+\declaretheoremstyle[
+	headfont=\bfseries\sffamily\color{WildStrawberry!70!black}, bodyfont=\normalfont,
+	mdframed={
+			linewidth=2pt,
+			rightline=false, topline=false, bottomline=false,
+			linecolor=WildStrawberry, backgroundcolor=WildStrawberry!5,
+			nobreak=false
+		}
+]{thmpinkbox}
+
+\declaretheoremstyle[
+	headfont=\bfseries\sffamily\color{MidnightBlue!70!black}, bodyfont=\normalfont,
+	mdframed={
+			linewidth=2pt,
+			rightline=false, topline=false, bottomline=false,
+			linecolor=MidnightBlue, backgroundcolor=MidnightBlue!5,
+			nobreak=false
+		}
+]{thmblue2box}
+
+\declaretheoremstyle[
+	headfont=\bfseries\sffamily\color{Gray!70!black}, bodyfont=\normalfont,
+	mdframed={
+			linewidth=2pt,
+			rightline=false, topline=false, bottomline=false,
+			linecolor=Gray, backgroundcolor=Gray!5,
+			nobreak=false
+		}
+]{notgraybox}
+
+\declaretheoremstyle[
+	headfont=\bfseries\sffamily\color{Gray!70!black}, bodyfont=\normalfont,
+	mdframed={
+			linewidth=2pt,
+			rightline=false, topline=false, bottomline=false,
+			linecolor=Gray,
+			nobreak=false
+		}
+]{notgrayline}
+
+% \declaretheoremstyle[
+% 	headfont=\bfseries\sffamily\color{RawSienna!70!black}, bodyfont=\normalfont,
+% 	numbered=no,
+% 	mdframed={
+% 			linewidth=2pt,
+% 			rightline=false, topline=false, bottomline=false,
+% 			linecolor=RawSienna, backgroundcolor=RawSienna!1,
+% 		},
+% 	qed=\qedsymbol
+% ]{thmproofbox}
+
+\declaretheoremstyle[
+	headfont=\bfseries\sffamily\color{NavyBlue!70!black}, bodyfont=\normalfont,
+	numbered=no,
+	mdframed={
+			linewidth=2pt,
+			rightline=false, topline=false, bottomline=false,
+			linecolor=NavyBlue, backgroundcolor=NavyBlue!1,
+			nobreak=false
+		}
+]{thmexplanationbox}
+
+\declaretheoremstyle[
+	headfont=\bfseries\sffamily\color{WildStrawberry!70!black}, bodyfont=\normalfont,
+	numbered=no,
+	mdframed={
+			linewidth=2pt,
+			rightline=false, topline=false, bottomline=false,
+			linecolor=WildStrawberry, backgroundcolor=WildStrawberry!1,
+			nobreak=false
+		}
+]{thmanswerbox}
+
+\declaretheoremstyle[
+	headfont=\bfseries\sffamily\color{Violet!70!black}, bodyfont=\normalfont,
+	mdframed={
+			linewidth=2pt,
+			rightline=false, topline=false, bottomline=false,
+			linecolor=Violet, backgroundcolor=Violet!1,
+			nobreak=false
+		}
+]{conjpurplebox}
+
+\declaretheorem[style=thmgreenbox, name=Definition, numberwithin=section]{definition}
+\declaretheorem[style=thmgreen2box, name=Definition, numbered=no]{definition*}
+\declaretheorem[style=thmredbox, name=Theorem, numberwithin=section]{theorem}
+\declaretheorem[style=thmred2box, name=Theorem, numbered=no]{theorem*}
+\declaretheorem[style=thmredbox, name=Lemma, numberwithin=section]{lemma}
+\declaretheorem[style=thmredbox, name=Proposition, numberwithin=section]{proposition}
+\declaretheorem[style=thmredbox, name=Corollary, numberwithin=section]{corollary}
+\declaretheorem[style=thmpinkbox, name=Problem, numberwithin=section]{problem}
+\declaretheorem[style=thmpinkbox, name=Problem, numbered=no]{problem*}
+\declaretheorem[style=thmblue2box, name=Claim, numbered=no]{claim}
+\declaretheorem[style=conjpurplebox, name=Conjecture, numberwithin=section]{conjecture}
+\declaretheorem[style=conclredbox, name=Conclusion, numberwithin=section]{conclusion}
+\declaretheorem[style=conjpurplebox, name=Question, numberwithin=section]{question}
+\declaretheorem[style=thmbluebox, numberwithin=section, name=Example]{eg}
+\declaretheorem[style=thmblueline, numberwithin=section, name=Remark]{remark}
+\declaretheorem[style=thmredbox, name=Fact, numberwithin=section]{fact}
+
+\renewcommand\theHdefinition{\thesection.\arabic {definition}}
+\renewcommand\theHtheorem{\thesection.\arabic {theorem}}
+\renewcommand\theHlemma{\thesection.\arabic {lemma}}
+\renewcommand\theHproposition{\thesection.\arabic {proposition}}
+\renewcommand\theHcorollary{\thesection.\arabic {corollary}}
+\renewcommand\theHproblem{\thesection.\arabic {problem}}
+\renewcommand\theHconjecture{\thesection.\arabic {conjecture}}
+
+% Redefine proof environment to get a full control.
+\makeatletter
+\renewenvironment{proof}[1][\proofname]{\par
+	\pushQED{\qed}%
+	\normalfont \topsep-2\p@\@plus6\p@\relax
+	\trivlist
+	\item[\hskip\labelsep
+	            \color{RawSienna!70!black}\sffamily\bfseries
+	            #1\@addpunct{.}]\ignorespaces
+	\begin{mdframed}[linewidth=2pt,rightline=false, topline=false, bottomline=false,linecolor=RawSienna, backgroundcolor=RawSienna!1]
+		}{%
+		\popQED\endtrivlist\@endpefalse
+	\end{mdframed}
+}
+\makeatother
+
+\declaretheorem[style=thmexplanationbox, numbered=no, name=Proof]{tmpexplanation}
+\newenvironment{explanation}[1][]{\vspace{-10pt}\pushQED{\(\circledast\)}\begin{tmpexplanation}}{\null\hfill\popQED\end{tmpexplanation}}
+\declaretheorem[style=thmblueline, numbered=no, name=Note]{note}
+\declaretheorem[style=thmpinkbox, numbered=no, name=Exercise]{exercise}
+\declaretheorem[style=notgrayline, numbered=no, name=As previously seen]{prev}
+\declaretheorem[style=thmgreen3box, numbered=no, name=Intuition]{intuition}
+\declaretheorem[style=thmgreen3box, numbered=no, name=Idea]{idea}
+\declaretheorem[style=notgraybox, numbered=no, name=Notation]{notation}
+\declaretheorem[style=thmanswerbox, numbered=no, name=Answer]{tmpanswer}
+\declaretheorem[style=notgraybox, numbered=no, name=Parenthesis]{parenthesis}
+\newenvironment{answer}[1][]{\vspace{-10pt}\pushQED{\(\circledast\)}\begin{tmpanswer}}{\null\hfill\popQED\end{tmpanswer}}
+
+
+\usepackage{etoolbox}
+\renewcommand{\qed}{\null\hfill\(\blacksquare\)}
+
+\makeatletter
+
+\def\testdateparts#1{\dateparts#1\relax}
+\def\dateparts#1 #2 #3 #4 #5\relax{
+	\marginpar{\small\textsf{\mbox{#1 #2 #3 #5}}}
+}
+
+\def\@lecture{}%
+\newcommand{\lecture}[3]{
+	\ifthenelse{\isempty{#3}}{%
+		\global\def\@lecture{Lecture #1}%
+	}{%
+		\global\def\@lecture{Lecture #1: #3}%
+	}%
+	\section*{\@lecture}
+	\marginpar{\small\textsf{\mbox{#2}}}
+}
+
+\usepackage{pgffor}%
+\newcommand{\lec}[2]{%
+	\foreach \c in {#1,...,#2}{%
+			\IfFileExists{Lectures/lec_\c.tex} {%
+				\input{Lectures/lec_\c.tex}%
+			}{}%
+		}%
+}
+
+% fancy headers
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\fancyhead[L]{}
+\fancyhead[R]{\@lecture}
+\fancyfoot[L]{}
+\fancyfoot[R]{\thepage}
+\fancyfoot[C]{\leftmark}
+
+\makeatother
+
+% notes
+\usepackage[color=pink]{todonotes}
+\usepackage{marginnote}
+\let\marginpar\marginnote
+
+% Fix some stuff
+% %http://tex.stackexchange.com/questions/76273/multiple-pdfs-with-page-group-included-in-a-single-page-warning
+% \pdfsuppresswarningpagegroup=1
+
+% Appendix environment
+\usepackage{appendix}
+\def\chapterautorefname{Section}
+\def\sectionautorefname{Section}
+\def\appendixautorefname{Appendix}
+\renewcommand\appendixname{Appendix}
+\renewcommand\appendixtocname{Appendix}
+\renewcommand\appendixpagename{Appendix}
+% begin appendix autoref patch [\autoref subsections in appendix](https://tex.stackexchange.com/questions/149807/autoref-subsections-in-appendix)
+\makeatletter
+\patchcmd{\hyper@makecurrent}{%
+	\ifx\Hy@param\Hy@chapterstring
+		\let\Hy@param\Hy@chapapp
+	\fi
+}{%
+	\iftoggle{inappendix}{%true-branch
+		% list the names of all sectioning counters here
+		\@checkappendixparam{chapter}%
+		\@checkappendixparam{section}%
+		\@checkappendixparam{subsection}%
+		\@checkappendixparam{subsubsection}%
+		\@checkappendixparam{paragraph}%
+		\@checkappendixparam{subparagraph}%
+	}{}%
+}{}{\errmessage{failed to patch}}
+
+\newcommand*{\@checkappendixparam}[1]{%
+	\def\@checkappendixparamtmp{#1}%
+	\ifx\Hy@param\@checkappendixparamtmp
+		\let\Hy@param\Hy@appendixstring
+	\fi
+}
+\makeatletter
+
+\newtoggle{inappendix}
+\togglefalse{inappendix}
+
+\apptocmd{\appendix}{\toggletrue{inappendix}}{}{\errmessage{failed to patch}}
+\apptocmd{\subappendices}{\toggletrue{inappendix}}{}{\errmessage{failed to patch}}
+% end appendix autoref patch
+
+% table of content depth
+\setcounter{tocdepth}{2}
+
+

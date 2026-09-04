@@ -1,0 +1,331 @@
+\chapter{Matching in Regular Bipartite Graphs}
+
+\begin{definition}[Regular Graph]
+	A graph \( G = (V, E) \) is called \( d \)-regular if $\forall v \in V, \deg(v) = d$.
+\end{definition}
+
+\begin{theorem}
+	\label{thm:regular-matching}
+	Let \( G = (L \cup R, E) \) be a \( d \)-regular bipartite graph with \( |L| = |R| = n \). Then
+	\begin{itemize}
+		\item \( G \) has a perfect matching.
+		\item $E$ can be partitioned into $d$ perfect matchings.
+	\end{itemize}
+\end{theorem}
+\begin{proof}[Proof 1: Using Hall's Theorem]
+	If $G$ doesn't have a perfect matching, then by Hall's Theorem, there exists $S \subseteq L$ such that $|N(S)| < |S|$. However, since $G$ is $d$-regular, we have $d|S| = \sum_{v \in S} \deg(v) \le \sum_{u \in N(S)} \deg(u) = d|N(S)|$, which implies $|S| \le |N(S)|$, a contradiction. Therefore, $G$ has a perfect matching.
+\end{proof}
+\begin{proof}[Proof 2: Max Flow]
+	Use Ford-Fulkerson algorithm to find a max flow in the graph where all capacities are 1.
+	If all edges have integer capacities, the max flow we find has to be integral.
+
+	The max flow is $n$ if and only if we can find a perfect matching.
+	On the other hand, we can construct a fractional flow with $\forall e, f(e) = 1/d$ (one can easily verify it's a valid flow). Therefore, the max flow value is at least $n$, which means we can find a perfect matching.
+\end{proof}
+
+Here we present two algorithms: a deterministic one with $O(m)$ time when $d = 2^k$, and a sub-linear randomized one with $O(n \log n)$ time for general $d$.
+
+\section{Deterministic: Gabow-Kariv Algorithm}
+
+Here let $d = 2^k$.
+We know the following theorem back in EECS 203:
+
+\begin{theorem}
+	If $\forall v\in V$, $\deg(v)$ is even, then $G$ has an Euler tour.
+\end{theorem}
+
+Unless $d = 1$, we can find an Euler tour in $G$. This gives an ordering of the edges $(e_1, e_2, e_3, \ldots, e_m)$.
+
+For any vertex $v$, if $e_i$ goes into $v$, then $e_{i+1}$ must go out of $v$ (indices are taken modulo $m$). Therefore, if we partition the edges into odd index edges $\{e_1, e_3, e_5, \ldots\}$ and even index edges $\{e_2, e_4, e_6, \ldots\}$, then each vertex with odd in-edges must have a same number of even out-edges, and each vertex with even in-edges must have a same number of odd out-edges.
+
+This means both the odd index edges and the even index edges form a $d/2$-regular bipartite graph. We can choose one of the edge set, and recursively apply this procedure until we get $d=1$, which gives us a perfect matching.
+
+\begin{algorithm}[H]
+	\caption{Gabow-Kariv Algorithm}
+	\If{$d = 1$}{
+		\Return $G$\;
+	}
+	Find an Euler tour $(e_1, e_2, \ldots, e_m)$ in $G$\;
+	Form the graph $G_1 = (V,\{e_1, e_3, e_5, \ldots, e_{m-1}\})$\;
+	\Return Gabow-Kariv($G_1$)\;
+\end{algorithm}
+
+The time complexity is $O(m + \frac{m}{2} + \frac{m}{4} + \cdots) = O(m)$.
+
+\section{Background: Markov Chains}
+
+\begin{definition}[Markov Chain]
+	For a state space $S = \{ v_1, v_2, \ldots\}$ (finite or countable), a Markov chain is discrete-time stochastic process $X = (X_0, X_1, X_2, \ldots, X_T) in S^T$ (we can pick $X_0$ randomly or deterministically) such that $\forall t \ge 0$, $\forall i, j$, we have
+	\[
+		\Pr[X_{i+1} = s | X_0, X_1, \ldots, X_i = s'] = \Pr[X_{i+1} = s | X_i = s']
+	\]
+	(the process is \textbf{memoryless}: the history $X_0, X_1, \ldots, X_{t-1}$ is irrelevant) and
+	\[
+		\Pr[X_{i+1} = s | x_i = s'] = \Pr[X_{j+1} = s | X_j = s']
+	\]
+	(the process is \textbf{time-invariant}: the transition probability only depends on $s$ and $s'$, not on the time).
+
+	Therefore, we can encode the transition probabilities into a matrix $P$ where
+
+	\[
+		P[a,b] = \Pr[X_{i+1} = v_b | X_i = v_a]
+	\]
+
+\end{definition}
+
+\subsection{Random Walk on Graphs}
+
+Define $q_i$ to be the distribution of $X_i$ if we start from $x_0=v_1$. Then
+\begin{align*}
+	q_0 & = (1,0,0,\ldots)  \\
+	q_1 & = q_0 P           \\
+	q_2 & = q_1 P = q_0 P^2 \\
+	    & \vdots            \\
+	q_T & = q_0 P^T
+\end{align*}
+
+For some Markov chains, $q_T$ converges to a distribution $\pi$ as $T \to \infty$. We call $\pi$ the \textbf{stationary distribution} of the Markov chain.
+
+\begin{definition}[Stationary Distribution]
+	A distribution $\pi$ is called a stationary distribution of a Markov chain with transition matrix $P$ if
+	\begin{itemize}
+		\item $\sum_i \pi(i)= 1$
+		\item $\pi P = \pi$
+	\end{itemize}
+\end{definition}
+
+For finite, irreducible Markov chains, $\pi$ is unique. However, $\lim_{n \to \infty} q_0 P^n$ may not exist when the Markov chain is periodic. For example, for a 2-state Markov chain with $P = \begin{bmatrix} 0 & 1 \\ 1 & 0 \end{bmatrix}$, we have $\pi = (1/2, 1/2)$, but $q_0 P^n$ oscillates between $(1,0)$ and $(0,1)$.
+
+In these cases, we can instead find $\lim_{n \to \infty} q_0 (\frac{1}{2}P+\frac{1}{2}I)^n$ or $\lim_{n \to \infty} \frac{1}{n} \sum_{i=1}^{n}q_0p^i$, which both converge to $\pi$.
+
+\subsection{Return Times}
+
+\begin{definition}[Return Time]
+	For a Markov chain $X$, $\rho(s,s'):=\E[\min\{t | X_t = s'\} | X_0 = s]$
+\end{definition}
+
+\begin{lemma}
+	\[ \forall s, \pi(s) = \frac{1}{\rho(s,s)} \]
+\end{lemma}
+\begin{proof}[Proof Sketch]
+	Let $N_n(s)$ be the number of times we visit $s$ in the first $n$ steps. Then $\lim_{n \to \infty} \frac{N_n(s)}{n} = \pi(s)$ by the definition of stationary distribution.
+
+	Suppose the visit times are $t_0, t_1, t_2, \ldots$, and denote $Y_i = t_i - t_{i-1}$.
+	Then $\E[Y_i] = \rho(s,s)$, so
+	\[\lim_{k\to\infty}\frac{Y_1+Y_2+\cdots+Y_k}{k} = \rho(s,s)\]
+
+	As $k = N_n(s)$ and $Y_1 + Y_2 + \cdots + Y_k \approx n$, we have $\lim_{n \to \infty} \frac{N_n(s)}{n} = \pi(s)$ and $\lim_{k\to\infty}\frac{n}{N_n(s)} = \rho(s,s)$, which implies $\pi(s) = \frac{1}{\rho(s,s)}$.
+\end{proof}
+
+\subsection{Eulerian Markov Chains}
+
+\begin{definition}[Eulerian Graph]
+	A directed graph $G$ is called Eulerian if $\forall v \in V, \indeg(v) = \outdeg(v)$.
+\end{definition}
+
+Consider a Markov chain defined by a Eulerian graph $G=(V,E)$ with uniform transition probabilities:
+
+\[P[i,j] = \begin{cases}
+		\frac{1}{\outdeg(v_i)} & \text{if } (v_i, v_j) \in E \\
+		0                      & \text{otherwise}
+	\end{cases}\]
+
+\begin{lemma}
+	The stationary distribution of the Markov chain defined by a Eulerian graph $G$ is
+	\[\forall j, \pi(j) = \frac{\outdeg(v_j)}{m}.\]
+\end{lemma}
+\begin{proof}
+	\begin{align*}
+		(\pi P)[j] & = \sum_i \pi(i) P[i,j]                                                           \\
+		           & = \sum_{i: (v_i, v_j) \in E} \frac{\outdeg(v_i)}{m} \cdot \frac{1}{\outdeg(v_i)} \\
+		           & = \frac{\indeg(v_j)}{m}                                                          \\
+		           & = \frac{\outdeg(v_j)}{m}                                                         \\
+		           & = \pi(j)
+	\end{align*}
+\end{proof}
+
+\section{Perfect Matching via Random Walk}
+
+Similar to previous algorithms about matching, we try to find augmenting paths in the graph.
+
+For a partially matched graph, we can construct a directed graph $G_M = (V', E')$ where $V' = L \cup R \cup \{s,t\}$, and $E'$ contains the following edges:
+\begin{itemize}
+	\item For each unmatched vertex $u \in L$, we add a directed edge $(s,u)$ to $E'$.
+	\item For each unmatched vertex $v \in R$, we add a directed edge $(v,t)$ to $E'$.
+	\item For each unmatched edge $(u,v)$ where $u \in L$ and $v \in R$, we add a directed edge $(u,v)$ to $E'$.
+	\item For each matched edge $(u,v)$ where $u \in L$ and $v \in R$, we add a directed edge $(v,u)$ to $E'$.
+\end{itemize}
+
+\begin{lemma}
+	If $W$ is a walk from $s$ to $t$ in $G_M$, then $W$ contains an augmenting path $P$ in $G$.
+\end{lemma}
+\begin{remark}
+	$W$ itself may not be an augmenting path since it may contain cycles. If we directly flip the edges along $W$, we may end up with a matching where a vertex is matched to multiple vertices.
+
+	However, we can trim the cycles to get an augmenting path.
+\end{remark}
+
+To analyze the probability that a random walk succeeds, we try to change the graph into a Eulerian graph.
+
+Denote the number of free vertices in $L$ as $f$.
+To start with, note that $\outdeg(s) = \indeg(t) = f$, and $\indeg(s) = \outdeg(t) = 0$. Therefore, we can contract $s$ and $t$ into a single vertex $s$, so that $\indeg(s) = \outdeg(s) = f$.
+
+Then, for any matched vertex $u\in L$, we have $\outdeg(u) = d-1$ and $\indeg(u) = 1$. Similarly, for any matched vertex $v \in R$, we have $\outdeg(v) = 1$ and $\indeg(v) = d-1$. Therefore, we can contract all matched edges. As a result, the new vertex has $\outdeg = \indeg = d-1$.
+
+\begin{center}
+	\begin{tikzpicture}[
+			free/.style={circle, draw, fill=ForestGreen!15, minimum size=0.7cm, inner sep=0pt, font=\small},
+			matched/.style={circle, draw, fill=NavyBlue!15, minimum size=0.7cm, inner sep=0pt, font=\small},
+			src/.style={circle, draw, fill=Gray!20, minimum size=0.7cm, inner sep=0pt, font=\small},
+			>=Stealth,
+		]
+		% Matched pair rectangles (behind nodes)
+		\draw[NavyBlue, thick, rounded corners=12pt, fill=NavyBlue!8]
+		(-0.45, 3.5) rectangle (3.95, 4.5);
+		\draw[NavyBlue, thick, rounded corners=12pt, fill=NavyBlue!8]
+		(-0.45, 1.5) rectangle (3.95, 2.5);
+		% Nodes (t relabeled s — same position, same graph)
+		\node[src]     (s)  at (-2.5, -2) {$s$};
+		\node[matched] (u1) at (0,     4) {$u_1$};
+		\node[matched] (u2) at (0,     2) {$u_2$};
+		\node[free]    (u3) at (0,     0) {$u_3$};
+		\node[free]    (u4) at (0,    -2) {$u_4$};
+		\node[free]    (u5) at (0,    -4) {$u_5$};
+		\node[matched] (v1) at (3.5,   4) {$v_1$};
+		\node[matched] (v2) at (3.5,   2) {$v_2$};
+		\node[free]    (v3) at (3.5,   0) {$v_3$};
+		\node[free]    (v4) at (3.5,  -2) {$v_4$};
+		\node[free]    (v5) at (3.5,  -4) {$v_5$};
+		\node[src]     (t)  at (6,    -2) {$s$};
+		% s -> free L vertices
+		\draw[->, ForestGreen, thick] (s) to[bend left=20]  (u3);
+		\draw[->, ForestGreen, thick] (s) --                (u4);
+		\draw[->, ForestGreen, thick] (s) to[bend right=15] (u5);
+		% free R vertices -> s (formerly t)
+		\draw[->, ForestGreen, thick] (v3) to[bend left=15]  (t);
+		\draw[->, ForestGreen, thick] (v4) --                (t);
+		\draw[->, ForestGreen, thick] (v5) to[bend right=20] (t);
+		% Matched edges reversed: R -> L (inside rectangles)
+		\draw[->, NavyBlue, thick] (v1) -- (u1);
+		\draw[->, NavyBlue, thick] (v2) -- (u2);
+		% Unmatched edges: L -> R
+		\draw[->] (u1) to[bend right=8]  (v3);
+		\draw[->] (u2) --                (v4);
+		\draw[->] (u3) to[bend left=8]   (v1);
+		\draw[->] (u3) to[bend right=8]  (v4);
+		\draw[->] (u4) --                (v2);
+		\draw[->] (u4) to[bend right=8]  (v5);
+		\draw[->] (u5) to[bend left=5]   (v3);
+		\draw[->] (u5) --                (v5);
+		% Column labels
+		\node[font=\small, gray] at (0,   5) {$L$};
+		\node[font=\small, gray] at (3.5, 5) {$R$};
+	\end{tikzpicture}
+\end{center}
+
+Finally, for any free vertex $u \in L$, we have $\outdeg(u) = d$ and $\indeg(u) = 1$, and for any free vertex $v \in R$, we have $\outdeg(v) = 1$ and $\indeg(v) = d$. We can duplicate all edges $(s,u)$ and $(v,s)$ for extra $d-1$ times, so that $\outdeg(s) = \indeg(s) = df$, $\outdeg(u) = \indeg(u) = d$, and $\outdeg(v) = \indeg(v) = d$.
+
+\begin{center}
+	\begin{tikzpicture}[
+			free/.style={circle, draw, fill=ForestGreen!15, minimum size=0.7cm, inner sep=0pt, font=\small},
+			contr/.style={circle, draw, fill=Violet!15, minimum size=0.7cm, inner sep=0pt, font=\small},
+			src/.style={circle, draw, fill=Gray!20, minimum size=0.7cm, inner sep=0pt, font=\small},
+			>=Stealth,
+		]
+		\node[src]   (sl) at (-2.5, -2) {$s$};
+		\node[contr] (w1) at (1.75,  4) {$w_1$};
+		\node[contr] (w2) at (1.75,  2) {$w_2$};
+		\node[free]  (u3) at (0,     0) {$u_3$};
+		\node[free]  (u4) at (0,    -2) {$u_4$};
+		\node[free]  (u5) at (0,    -4) {$u_5$};
+		\node[free]  (v3) at (3.5,   0) {$v_3$};
+		\node[free]  (v4) at (3.5,  -2) {$v_4$};
+		\node[free]  (v5) at (3.5,  -4) {$v_5$};
+		\node[src]   (sr) at (6,    -2) {$s$};
+		% sl -> free u: 2 parallel arrows each
+		\draw[->, ForestGreen, thick] (sl) to[bend left=22]  (u3);
+		\draw[->, ForestGreen, thick] (sl) to[bend left=5]   (u3);
+		\draw[->, ForestGreen, thick] (sl) to[bend left=10]  (u4);
+		\draw[->, ForestGreen, thick] (sl) to[bend right=10] (u4);
+		\draw[->, ForestGreen, thick] (sl) to[bend right=5]  (u5);
+		\draw[->, ForestGreen, thick] (sl) to[bend right=22] (u5);
+		% free v -> sr: 2 parallel arrows each
+		\draw[->, ForestGreen, thick] (v3) to[bend left=5]   (sr);
+		\draw[->, ForestGreen, thick] (v3) to[bend left=22]  (sr);
+		\draw[->, ForestGreen, thick] (v4) to[bend left=10]  (sr);
+		\draw[->, ForestGreen, thick] (v4) to[bend right=10] (sr);
+		\draw[->, ForestGreen, thick] (v5) to[bend right=5]  (sr);
+		\draw[->, ForestGreen, thick] (v5) to[bend right=22] (sr);
+		% contracted vertex edges (single copies)
+		\draw[->] (u3) -- (w1);
+		\draw[->] (u4) -- (w2);
+		\draw[->] (w1) -- (v3);
+		\draw[->] (w2) -- (v4);
+		% remaining unmatched edges (single copies)
+		\draw[->] (u3) to[bend right=8]  (v4);
+		\draw[->] (u4) to[bend right=8]  (v5);
+		\draw[->] (u5) to[bend left=5]   (v3);
+		\draw[->] (u5) --                (v5);
+	\end{tikzpicture}
+\end{center}
+
+This gives the full algorithm:
+
+\begin{algorithm}[H]
+	\caption{Random Walk Algorithm}
+	$M \gets \emptyset$\;
+	\While{$|M| < n$}{
+		$G_M \gets$ the directed graph defined by $M$ where unmatched edges go from $L$ to $R$ and matched edges go from $R$ to $L$\;
+		\ForEach{unmatched $u \in L$}{
+			Add $d$ parallel edges from $s$ to $u$\;
+		}
+		\ForEach{unmatched $v \in R$}{
+			Add $d$ parallel edges from $v$ to $s$\;
+		}
+		\ForEach{$(u,v)\in M$}{
+			Contract the edge $(u,v)$\;
+		}
+		Do a random walk from $s$ in the new graph until we reach $s$ again\;
+		Contract the walk into a simple path $P$\;
+		$M \gets M \oplus P$\;
+	}
+	\Return $M$\;
+\end{algorithm}
+\begin{theorem}
+	The expected running time of the random walk algorithm is $O(n \log n)$.
+\end{theorem}
+\begin{proof}
+	$G_M$ is a Eulerian graph.
+	\[\text{number of edges} = (d-1)(n-f) + 3df < nd + 2df\]
+	Therefore,
+	\[\rho(s,s) = \frac{\text{number of edges}}{\outdeg(s)} < \frac{nd + 2df}{df} = n/f + 2\]
+	Every iteration increases the size of the matching by 1, so the expected running time is
+	\[
+		\sum_{f=1}^{n} (n/f + 2) = 2n + n\cdot \sum_{f=1}^{n} 1/f < 2n + n \cdot (\ln n + 1) = O(n \log n).
+	\]
+\end{proof}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
