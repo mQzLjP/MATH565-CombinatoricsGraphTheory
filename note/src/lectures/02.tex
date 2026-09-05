@@ -37,4 +37,5 @@ To formalize this question, we need to introduce the basic definition of graph t
 
 There're 2 ways to compute the size of $\multiset{S}{k}$.
 
+Assume a grid of size $n\times (k+1)$. We label the columns with elements in $S$, and rows from $0$ to $k$. The problem is then equivalent to finding the ways to walk from $(0,S_1)$ to $(k,S_n)$, where we can only move right or up (the number of steps we go up is the multiplicity of the corresponding element in the multiset). The number of such paths is $\binom{n+k-1}{k}$.
 
