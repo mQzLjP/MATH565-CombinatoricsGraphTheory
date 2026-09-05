@@ -1,16 +1,16 @@
 \chapter{Taran's Theorem}
 
-\begin{question}
+\begin{question}\label{question:1}
 	How many connections does a group of $n$ people we need to gather to ensure that there exists a triplet of mutual friends?
 \end{question}
 
 To formalize this question, we need to introduce the basic definition of graph theory.
 
-\section{Graph}
+\section{Multisets and Combinatorial Counting}
 
 \begin{definition}[Multiset]
 	A \textbf{multiset} $M$ on a set $S$ is a collection (unordered) of elements in $S$.
-	
+
 	$\forall x\in M\cap S$, the number of times that $x\in S$ occurs in $M$ is greater or equal to $0$ and is called the \textbf{multiplicity} of $x$ in $M$, $\mu_M(x)$.
 
 	If $\forall x\in S, \mu_M(x) = \mu_{M'}(x)$, then $M = M'$.
@@ -32,10 +32,65 @@ To formalize this question, we need to introduce the basic definition of graph t
 		\multiset{S}{k} = \{k-\text{multisets of }S\} = \{M: M\text{ is a multiset on }S, |M| = k\}
 	\]
 	\[ \left|\multiset{S}{k}\right| = \binom{n+k-1}{k}\]
-	
+
 \end{definition}
 
 There're 2 ways to compute the size of $\multiset{S}{k}$.
 
 Assume a grid of size $n\times (k+1)$. We label the columns with elements in $S$, and rows from $0$ to $k$. The problem is then equivalent to finding the ways to walk from $(0,S_1)$ to $(k,S_n)$, where we can only move right or up (the number of steps we go up is the multiplicity of the corresponding element in the multiset). The number of such paths is $\binom{n+k-1}{k}$.
 
+Alternatively, we know that $\sum_{i=1}^n \mu_M(S_i) = k$, and $\mu_M(S_i) \ge 0$. This is equivalent to finding the number of non-negative integer solutions to the equation $x_1 + x_2 + \cdots + x_n = k$, which is a classic combinatorial problem. Using stars and bars, we can find that the number of solutions is $\binom{n+k-1}{k}$.
+
+\section{Graph}
+
+\begin{definition}[Finite Graph]
+	A \textbf{finite graph} $G$ is a triple $(V,E,\varphi)$, where
+	\begin{itemize}
+		\item $V = \{v_1,v_2,\cdots,v_n\}$,
+		\item $E = \{e_1,e_2,\cdots,e_q\}$,
+		\item $\varphi$ is a function from $E$ to $\multiset{V}{2}$.
+	\end{itemize}
+\end{definition}
+
+\begin{definition}[Simple Graph]
+	A finite graph is \textbf{simple} if $\varphi$ is injective (i.e. no multi-edges) and $\im(\varphi) \subseteq \binom{V}{2}$ (i.e. no loops).
+\end{definition}
+
+For the sake of simplicity, we use the following notations from now on:
+\begin{itemize}
+	\item $\varphi(e) = (u,v)$ is denoted as $e = (u,v)$;
+	\item If $e=(u,u)$, we say $e$ is a loop;
+	\item Subset $I$ of $V$ is independent if no pairs in $I$ are in $E$.
+\end{itemize}
+
+\begin{definition}[Complete Graph and Complete Bipartite Graph]
+	For $n\ge 3$, $V$ with $|V|=n$, the \textbf{complete graph} $K_n$ is the graph $(V,\binom{V}{2},\varphi)$, where $\varphi$ is the isomorphism from $\{e_1,e_2,\cdots,e_{\binom{n}{2}}\}$ to $\binom{V}{2}$.
+
+	A \textbf{complete bipartite graph} $K_{m,n}$ is a graph $(L\cup R, L\times R)$, where $|L|=m, |R|=n$ and $L\cap R = \emptyset$.
+\end{definition}
+
+With such definitions, we can formalize Question \ref{question:1} as follows:
+
+\begin{question}
+	What is the minimum number of edges in a simple graph with $n$ vertices that guarantees the existence of a $K_3$ subgraph?
+\end{question}
+
+Equivalently, we can ask the following question:
+
+\begin{question}
+	What is the maximum number of edges in a simple graph with $n$ vertices that does not contain a $K_3$ subgraph?
+\end{question}
+
+Think of a Complete Bipartite Graph $K_{\lfloor n/2\rfloor, \lceil n/2\rceil}$, which has $\lfloor n^2/4\rfloor$ edges and does not contain a $K_3$ subgraph. We can say the lower bound of this question is $\lfloor n^2/4\rfloor$.
+
+Actually, as Taran's Theorem states, this is also the upper bound.
+
+\section{Taran's Theorem}
+
+\begin{definition}[Taran's Number]
+	Let $n\ge 3$. The \textbf{Taran's number} $T(n) = \max\{|E(G)|: |V(G)|=n\text{ and }G\text{ does not contain a }K_3\text{ subgraph}\}$.
+\end{definition}
+
+\begin{theorem}[Taran's Theorem]
+	For $n\ge 3$, $T(n) = \lfloor n^2/4\rfloor$.
+\end{theorem}
