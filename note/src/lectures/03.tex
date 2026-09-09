@@ -1,3 +1,26 @@
 \begin{proof}
-It suffices to prove that $T(n) \le n^2/4$, i.e. for any graph $G$ with no triangle subgraph on $n$ vertices.
+It suffices to prove that $T(n) \le n^2/4$, i.e. for any graph $G$ with no triangle subgraph on $n$ vertices, $|E(G)|\le n^2/4$.
+
+Let $x\in V(G)$ be a vertex with maximum degree $\deg(x) = d$. From definition we know $N(x)$ is an independent set, and $|N(x)| = d$.
+Therefore,
+\[
+  |E(G)| \le \sum_{v\not\in N(x)} \deg(v) \le \sum_{v\not\in N(x)} d = (n-d)d \le \max_d (n-d)d = n^2/4.
+\]
 \end{proof}
+
+\section{Extending to $K_p$}
+
+Similar to how we come up with bipartites, for $K_p$, we can consider $(p-1)$-partite graphs.
+Formally, consider $K(n,p)$ as a multi-partite graph with:
+\[ n = t(p-1)+r, \quad 0\le r < p-1, \]
+where $t$ is the size of each partite set and $r$ is the number of partite sets with size $t+1$. Then we have
+\[ V = S_1\cup S_2\cup \cdots \cup S_r \cup S_{r+1}\cup \cdots \cup S_{p-1}, \]
+where $|S_i| = t+1$ for $i\le r$ and $|S_i| = t$ for $i>r$. The number of edges in $K(n,p)$ is
+\[ E = \{(v,u): v\in S_i, u\in S_j, i\neq j\}.\]
+
+Calculating the number of edges in $K(n,p)$ (we omit the details here), we have
+\[ M(n,p) = |E(K(n,p))| = \frac{(p-2)n^2}{2(p-1)} + \frac{r(p-1-r)}{2(p-1)}. \]
+
+\begin{theorem}[Tur\'{a}n's Theorem]
+  If a simple graph on $n$ vertices contains more than $M(n,p)$ edges, then it contains a $K_p$ subgraph.
+\end{theorem}
