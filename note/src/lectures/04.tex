@@ -1,0 +1,52 @@
+\begin{proof}
+	We prove by induction on $t$. (Equivalently, we can prove by strong induction on $n$.)
+
+	Base case: $t=0$. Then a clique $K_n$ will never contain a $K_p$ subgraph as $n<p$.
+
+	Inductive case: Assume the theorem holds for $t-1$.
+
+	Consider a graph $G$ on $n$ vertices with maximum number of edges so that it does not contain a $K_p$ subgraph.
+	We first claim $G$ must contain a $K_{p-1}$ subgraph. Otherwise, we can add an edge to $G$ without creating a $K_p$ subgraph, contradicting the maximality of $G$.
+	Fix one $K_{p-1}$ subgraph $H$. $|E(H)| = \binom{p-1}{2}$.
+
+	Let $G' = G\setminus H$ be the graph obtained by removing $H$ from $G$. Then $G'$ has $n-(p-1)$ vertices and does not contain a $K_p$ subgraph. By the inductive hypothesis, we have
+	\[ E(G') \le M(n-(p-1), p). \]
+
+	For edges between $H$ and $G'$, we claim that each vertex in $G'$ can be adjacent to at most $p-2$ vertices in $H$. Otherwise, if a vertex $v\in G'$ is adjacent to $p-1$ vertices in $H$, then together with $v$ and those $p-1$ vertices, we have a $K_p$ subgraph. Therefore:
+	\[ E(G) \le E(G') + E(H) + (p-2)(n-(p-1)) \le M(n-(p-1), p) + \binom{p-1}{2} + (p-2)(n-(p-1)) = M(n,p). \]
+
+\end{proof}
+
+\chapter{Ramsey's Theorem}
+
+\begin{question}
+	How many people do we need to invite to a party so that there are either 3 people who all know each other or 3 people who are all strangers to each other?
+\end{question}
+
+\section{Formalization}
+
+\begin{definition}[Monochromatic Clique]
+	Given a blue-orange coloring on $G=K_n$,
+	\[ \beta(G) = \max\{S\subseteq V(G): \text{all edges in $S$ are blue}\}\]
+	\[\omega(G) = \max\{S\subseteq V(G): \text{all edges in $S$ are orange}\} \]
+	Any $S\subseteq V(G)$ such that all edges in $S$ are the same color is called a \textbf{monochromatic} clique.
+\end{definition}
+
+\begin{theorem}[Ramsey's Theorem]
+	For any blue-orange coloring on $K_n$, with $n\ge 6$, either $\beta(G)\ge 3$ or $\omega(G)\ge 3$.
+\end{theorem}
+\begin{proof}
+	Let $n\ge 6$, pick $x\in K_n$.
+	By Pigeonhole Principle, either $x$ is adjacent to at least 3 vertices in blue or at least 3 vertices in orange. WLOG, assume $x$ is adjacent to at least 3 vertices in blue, say $y_1,y_2,y_3$. If any edge between $y_i$ and $y_j$ is blue, then we have a blue triangle. Otherwise, all edges between $y_i$ and $y_j$ are orange, then we have an orange triangle.
+\end{proof}
+
+Also, in $K_5$, we can color the cycle $C_5$ in blue and the remaining edges in orange, so that there is no monochromatic triangle. Therefore, $n=6$ is the minimum number of vertices needed to guarantee a monochromatic triangle.
+
+\section{Generalization}
+
+\begin{definition}[Ramsey Number]
+	For any $k,l\in \mathbb{Z}^+$, the Ramsey number $R(k,l)$ is the minimum number of vertices $n$ such that for any blue-orange coloring on $K_n$, either $\beta(G)\ge k$ or $\omega(G)\ge l$.
+\end{definition}
+\begin{theorem}[Generalized Ramsey's Theorem]
+	\[ R(k,l) = \binom{k+l-2}{k-1} \]
+\end{theorem}
