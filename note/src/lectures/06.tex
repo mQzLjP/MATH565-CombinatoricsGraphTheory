@@ -1,4 +1,4 @@
-\chapter{Planar Graphs}
+\chapter{Wagner's Theorem and Kuratowski's Theorem}
 
 \begin{question}
 	When can a graph $G$ be drawn in $\mathbb R^2$ with no edges crossing?
@@ -21,6 +21,8 @@
 	The connected components of $\mathbb R^2\setminus G$ for a planar graph are called \textbf{faces} of the drawing.
 \end{definition}
 
+\section{Theorems}
+
 \begin{theorem}[Jordan Curve Theorem]
 	A Jordan curve $C\subset \mathbb R^2$ is a curve that can be continuously morphed to $S'$, the solution set of $x^2+y^2=1$.
 
@@ -30,3 +32,71 @@
 \begin{theorem}
 	$K_5$ is not a planar graph.
 \end{theorem}
+\begin{proof}
+	Suppose, for contradiction, that there exists a planar drawing of $K_5$ called $f$. Let $\{p_1, p_2, p_3, p_4, p_5\}\subseteq \mathbb R^2$ be the images of the vertices of $K_5$ under $f$.
+	Observe that $\alpha_{(p_1, p_2)}\cup \alpha_{(p_2, p_3)}\cup \alpha_{(p_3, p_1)}$ is a Jordan curve. By the Jordan Curve Theorem, it divides the plane into two connected regions, one bounded and one unbounded.
+
+	For the graph to be planar, $p_4$ and $p_5$ have to be in the same region. WLOG, let them be in the bounded region.
+
+	Then $p_5$ is in one of the 3 regions $B_{124}, B_{234}, B_{134}$ (where $B_{ijk}$ is the region bounded by $\alpha_{(p_i, p_j)}\cup \alpha_{(p_j, p_k)}\cup \alpha_{(p_k, p_i)}$).
+	No matter which region $p_5$ is in, it will be connected to the vertex not in the bounded region through an arc, which has to cross the boundary of the region.
+
+	Therefore, there is no planar drawing of $K_5$.
+\end{proof}
+
+To determine if a graph is planar, we introduce some graph operations:
+\begin{definition}[Subdivision]
+	A \textbf{subdivision} of a graph $G$ is a graph obtained by inserting vertices into existing edges.
+\end{definition}
+
+\begin{definition}[Deletion, Contraction and Minor]
+	For $G=(V,E)$ and $e \in E$, the \textbf{deletion} $G\setminus e$ is $(V, E\setminus e)$.
+	The \textbf{contraction} $G/e$ is obtained by identifying the endpoints of $e$ (i.e. consider as a single vertex) and removing $e$ from $E$.
+	A \textbf{minor} of $G$ is a graph obtained by deletions, contractions and deleting isolated vertices.
+\end{definition}
+
+\begin{theorem}[Kuratowski's Theorem]
+	A graph $G$ is planar if and only if it does not contain a subgraph that is isomorphic to a subdivision of $K_5$ or $K_{3,3}$.
+\end{theorem}
+
+\begin{theorem}[Wagner's Theorem]
+	A graph $G$ is planar if and only if it does not contain a minor isomorphic to $K_5$ or $K_{3,3}$.
+\end{theorem}
+
+\begin{remark}
+	The family of planar graphs is preserved under taking minors and is called ``minor-closed''.
+\end{remark}
+
+\chapter{Graphs on Surfaces and Euler's Formula}
+
+\section{Surfaces}
+
+\begin{definition}[Surface]
+	For $g\ge 1$, a closed and orientable \textbf{surface} is obtained by gluing the opposite sides of $4g$-polygon in pairs via an orientation-reversing bijection.
+\end{definition}
+
+\begin{eg}
+	When $g=1$, we have the following 4-gon with opposite sides identified:
+	\begin{center}
+		\begin{tikzpicture}[
+				edgeblue/.style={violet},
+				edgeorange/.style={orange!85!black},
+				side/.style={very thick,postaction={decorate},
+						decoration={markings,mark=at position 0.55 with {\arrow{Stealth[length=3.5mm]}}}},
+				lab/.style={font=\normalsize},
+				capt/.style={font=\small},
+				cor/.style={circle,draw,fill=white,inner sep=1.4pt}]
+
+			\coordinate (Q0) at (-1.25,-1.25); \coordinate (Q1) at ( 1.25,-1.25);
+			\coordinate (Q2) at ( 1.25, 1.25); \coordinate (Q3) at (-1.25, 1.25);
+			\fill[black!4] (Q0)--(Q1)--(Q2)--(Q3)--cycle;
+			\draw[side,edgeblue]   (Q0)--(Q1);  \node[lab,below] at (0,-1.42) {$a$};
+			\draw[side,edgeorange] (Q1)--(Q2);  \node[lab,right] at (1.42,0)  {$b$};
+			\draw[side,edgeblue]   (Q3)--(Q2);  \node[lab,above] at (0,1.42)  {$a$};
+			\draw[side,edgeorange] (Q0)--(Q3);  \node[lab,left]  at (-1.42,0) {$b$};
+			\foreach \i in {0,...,3}{\node[cor] at (Q\i) {};}
+		\end{tikzpicture}
+	\end{center}
+
+	After gluing one pair of opposite sides, we get a cylinder. After gluing the other pair of opposite sides, we get a torus.
+\end{eg}

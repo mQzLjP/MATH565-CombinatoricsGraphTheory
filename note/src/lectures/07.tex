@@ -1,0 +1,103 @@
+We call $Z_g$ to be the surfaces obtained. A special case is $g=0$, where we define $Z_0$ to be $\mathbb R^2$ or $S^2$ (a sphere).
+
+\begin{definition}[Embedding]
+	A drawing of $G$ on a surface $S=Z_g$ is \textbf{embedding} $G\hookrightarrow S$ if there are no edge crossings.
+\end{definition}
+
+\begin{proposition}
+	Every finite graph $G$ admit an embedding $G\hookrightarrow Z_g$ for some $g\ge 0$.
+\end{proposition}
+
+\begin{proof}
+	If $G$ is planar, $G\hookrightarrow Z_0$.
+
+	If $G$ is not planar, for every crossing of edges, we can add a handle to the surface to remove the crossing, so that $g$ increases by $1$.
+
+	Since $G$ is finite, we can repeat this process finitely many times to obtain an embedding $G\hookrightarrow Z_g$ for some $g\ge 0$.
+\end{proof}
+
+\begin{definition}[Genus]
+	The \textbf{genus} of a graph $G$ is the minimum $g\ge 0$ such that $G\hookrightarrow Z_g$.
+\end{definition}
+
+Here we give (without proof) the genus of complete graphs and complete bipartite graphs.
+
+\begin{theorem}[Ringel-Youngs' Theorem]
+	$ $
+
+	For $m,n\ge 2$, the genus of $K_{m,n}$ is
+	\[
+		g(K_{m,n}) = \left\lceil \frac{(m-2)(n-2)}{4} \right\rceil.
+	\]
+
+	For $n\ge 3$, the genus of $K_n$ is
+	\[
+		g(K_n) = \left\lceil \frac{(n-3)(n-4)}{12} \right\rceil.
+	\]
+\end{theorem}
+
+\section{Euler's Formula}
+
+\begin{theorem}[Euler's Formula]
+	For any planar graph drawn on a plane with facet set $F$,
+	\[ |V| - |E| + |F| = 2. \]
+	Therefore, the number of faces is independent of the drawing of the graph.
+\end{theorem}
+\begin{proof}
+	Assume the graph is connected.
+	Fix $|V|$ and we prove by induction on $|E|$.
+
+	Base case: $|E| = |V|-1$. Then the graph is a tree and has $1$ face. So $|V| - |E| + |F| = |V| - (|V|-1) + 1 = 2$.
+
+	Inductive step: Assume the formula holds for $|E| = k$. For $|E| = k+1$, remove an edge $e$ from a cycle, as $G$ is not a tree.
+
+	Applying the inductive hypothesis to the new graph, we have
+	\begin{align*}
+		|F_G| & = |F_{G\setminus e}| + 1             \\
+		      & = (2 - |V| + |E_{G\setminus e}|) + 1 \\
+		      & = 2 - |V| + (|E_{G\setminus e}| + 1) \\
+		      & = 2 - |V| + |E_G|.
+	\end{align*}
+
+	In conclusion, $|V| - |E| + |F| = 2$ holds for all connected planar graphs. For disconnected planar graphs, we can apply the formula to each connected component and sum them up, which still yields $|V| - |E| + |F| = 2$.
+\end{proof}
+
+
+\begin{corollary}
+	For a simple planar graph $G$ with $|V|\ge 3$, we have $|E|\le 3|V|-6$.
+\end{corollary}
+\begin{proof}
+	Since $G$ is simple, each face has at least $3$ edges. Each edge can be adjacent to $2$ faces. Therefore, we have
+	\[
+		2|E| \ge 3|F|.
+	\]
+	Substituting this into Euler's formula, we get
+	\[
+		|V| - |E| + \frac{2|E|}{3} \ge 2.
+	\]
+	Simplifying, we obtain
+	\[
+		|E| \le 3(|V|-2) = 3|V|-6.
+	\]
+\end{proof}
+
+\begin{definition}[Girth]
+	\term{Girth} of a graph is the size of the smallest cycle in the graph.
+\end{definition}
+
+\begin{corollary}
+	For a simple planar graph $G$ with $|V| \ge 3$ and girth $\text{gir}$, then
+	\[ |E| \le \frac{\text{gir}}{\text{gir}-2}(|V|-2). \]
+\end{corollary}
+\begin{proof}
+	Similar to the previous corollary, since each face has at least $\text{gir}$ edges, we have
+	\[
+		\text{gir} \times |F| \le 2|E|.
+	\]
+	Substituting this into Euler's formula, we get the desired inequality.
+\end{proof}
+
+\begin{theorem}[Euler's Formula for Surfaces]
+	For a graph $G$ embedded on a surface $Z_g$ with facet set $F$ so that each face is an open disc, we have
+	\[ |V| - |E| + |F| = 2 - 2g. \]
+\end{theorem}
