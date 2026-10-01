@@ -1,9 +1,30 @@
 \begin{note}
-  The exact value of $R(k,l)$ remains open. What we know, for now, is that $R(4,4) =18, R(4,5) = 25$. Even $R(5,5)$ is still open.
+	The exact value of $R(k,l)$ remains open. What we know, for now, is that $R(4,4) =18, R(4,5) = 25$. Even $R(5,5)$ is still open.
 \end{note}
 
 \begin{proof}
-  We prove by induction on $k+l$.
+	We prove by induction on $k+l$.
 
-  Base case: when $k=1$ or $l=1$, for all $n\ge 1$, either $\beta(G)\ge k$ or $\omega(G)\ge l$ holds.
+	Base case: when $k=1$ or $l=1$, for all $n\ge 1$, either $\beta(G)\ge k$ or $\omega(G)\ge l$ holds.
+
+	Inductive case: assume the theorem holds for all $k'+l' = k+l-1$.
+	Fix a blue-orange coloring on $K_n$. To prove $n\ge \binom{k+l-2}{k-1}$, it suffices to prove the case for $n = \binom{k+l-2}{k-1}$.
+	Note that
+	\[ \binom{k+l-2}{k-1} = \binom{k+l-3}{k-2} + \binom{k+l-3}{k-1}. \]
+	Fix a vertex $v\in K_n$. Let $O = \{u\in K_n: (u,v) \text{ is orange}\}$ and
+	$B = \{u\in K_n: (u,v) \text{ is blue}\}$. Then $|O| + |B| = n-1 = \binom{k+l-2}{k-1}-1 = \binom{k+l-3}{k-2} + \binom{k+l-3}{k-1}-1$.
+
+	We claim, either $|O|\ge \binom{k+l-3}{k-1}$ or $|B|\ge \binom{k+l-3}{k-2}$. Otherwise, we have
+	\[ |O| \le \binom{k+l-3}{k-1} - 1 \text{ and } |B| \le \binom{k+l-3}{k-2} -1 \implies |O| + |B| \le n-2 \implies \contra. \]
+
+	\begin{itemize}
+		\item If $|O|\ge \binom{k+l-3}{k-1}$, then by the inductive hypothesis, either $\beta(O)\ge k$ or $\omega(O)\ge l-1$. If $\beta(O)\ge k$, then we have $\beta(G)\ge k$. Otherwise, if $\omega(O)\ge l-1$, then together with $v$, we have $\omega(G)\ge l$.
+		\item If $|B|\ge \binom{k+l-3}{k-2}$, then by the inductive hypothesis, either $\beta(B)\ge k-1$ or $\omega(B)\ge l$. If $\beta(B)\ge k-1$, then together with $v$, we have $\beta(G)\ge k$. Otherwise, if $\omega(B)\ge l$, then we have $\omega(G)\ge l$.
+	\end{itemize}
+	In all cases, we have either $\beta(G)\ge k$ or $\omega(G)\ge l$. Therefore, $R(k,l) \le n = \binom{k+l-2}{k-1}$.
 \end{proof}
+
+The same strategy can be used to prove the following (we omit here):
+\begin{theorem}
+	\[ R(k,l) \le R(k,l-1) + R(k-1,l).\]
+\end{theorem}

@@ -1,0 +1,32 @@
+\chapter{Planar Graphs}
+
+\begin{question}
+	When can a graph $G$ be drawn in $\mathbb R^2$ with no edges crossing?
+\end{question}
+
+\section{Formal Definitions}
+
+\begin{definition}[Drawing of a graph]
+	A \textbf{drawing} of a graph $G$ is a representation of $G$ in the plane $\mathbb R^2$ such that:
+	\begin{enumerate}
+		\item It's an injection from $V$ to $\mathbb R^2$.
+		\item For each $e= (u,v)\in E$, an \textbf{arc} $\alpha_e\subseteq \mathbb R^2$ is drawn between $f(u)$ and $f(v)$ such that for all vertex $w$ and edge $e$,
+		      $f(w)$ lies on $\alpha_e$ if and only if $w$ is an endpoint of $e$.
+	\end{enumerate}
+\end{definition}
+
+\begin{definition}[Planar (Embedding) and Faces]
+	A drawing of a graph $G$ is \textbf{planar} or is an \textbf{embedding} if no arcs meet except at shared endpoints, and no arcs meets itself.
+
+	The connected components of $\mathbb R^2\setminus G$ for a planar graph are called \textbf{faces} of the drawing.
+\end{definition}
+
+\begin{theorem}[Jordan Curve Theorem]
+	A Jordan curve $C\subset \mathbb R^2$ is a curve that can be continuously morphed to $S'$, the solution set of $x^2+y^2=1$.
+
+	$C$ divides the plane into two connected regions, one bounded and one unbounded.
+\end{theorem}
+
+\begin{theorem}
+	$K_5$ is not a planar graph.
+\end{theorem}
